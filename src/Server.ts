@@ -7,7 +7,7 @@ const server = http.createServer(app);
 const io = new SocketServer(server);
 
 export default class Server {
-	app: Express.Application;
+	app: any;
 	server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>;
 	io: SocketServer;
 	clients: Map<string, Socket>;
@@ -18,6 +18,10 @@ export default class Server {
 		this.io = new SocketServer(this.server);
 		this.server.listen(3000, this.handleBootup);
 		this.io.on("connection", this.handleConnection);
+
+		this.app.get("/", (_req: any, res: { send: (data: string) => void }) => {
+			res.send("Hello world");
+		});
 
 		this.clients = new Map();
 	}
@@ -33,6 +37,7 @@ export default class Server {
 
 	handleConnection(socket: Socket) {
 		console.log("a user connected: " + socket.id);
+		socket.emit("hello world", "this is data");
 
 		socket.on("identify", (id: string) => {
 			this.handleIdentify(socket, id);

@@ -16,6 +16,9 @@ class Server {
         this.io = new socket_io_1.Server(this.server);
         this.server.listen(3000, this.handleBootup);
         this.io.on("connection", this.handleConnection);
+        this.app.get("/", (_req, res) => {
+            res.send("Hello world");
+        });
         this.clients = new Map();
     }
     send(id, message) {
@@ -28,6 +31,7 @@ class Server {
     }
     handleConnection(socket) {
         console.log("a user connected: " + socket.id);
+        socket.emit("hello world", "this is data");
         socket.on("identify", (id) => {
             this.handleIdentify(socket, id);
         });
